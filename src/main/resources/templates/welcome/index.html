@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>애니타임</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/static/css/style.css}">
+<link rel="icon" th:href="@{/static/favicon.ico}">
+</head>
+<body>
+	<nav th:replace="~{componant/nav :: nav}"></nav>
+	<div style="margin-top: 80px; border-bottom: 1px solid #d6d6d6; background-color: #f2f2f2;">
+		<div class="p-3">
+			<div class="d-flex justify-content-center align-items-start">
+				<ul th:each="boardData : ${boardDatas}" class="mx-3 my-0 px-3" th:classappend="${boardDataStat.first ? '' : 'border-start border-1'}" style="list-style: none;">
+					<li th:each="board : ${boardData.boards}"><a class="link-dark link-underline-opacity-0 link-underline-opacity-100-hover" th:text="${board.name}" th:href="@{/{boardId}(boardId=${board.id})}"></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="main d-flex align-items-start" style="margin-top: 25px;">
+		<div class="" style="margin: 0 25px 0 25px; width: 175px;">
+			<div style="margin-bottom: 5px; border: 1px solid #d6d6d6; background-color: #f9f9f9;">
+				<form th:action="@{/logout}" method="post" class="p-3">
+					<img th:src="@{/static/image/profile.png}" class="d-block rounded-1" width="60" style="margin: 15px auto;">
+					<p th:text="${account.username}" class="fw-bold text-center mb-1"></p>
+					<p th:text="${account.nickname}" class="fs-7 text-secondary text-center"></p>
+					<div class="d-flex justify-content-between">
+						<button type="button" class="border border-1">내 정보</button>
+						<button type="submit" class="border border-1">로그아웃</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div style="width: 600px;">
+			<div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+				<div class="carousel-inner">
+					<div class="carousel-item active">
+						<img th:src="@{/static/image/graduation.png}" class="d-block w-100" alt="...">
+					</div>
+					<div class="carousel-item">
+						<img th:src="@{/static/image/orientation.png}" class="d-block w-100" alt="...">
+					</div>
+				</div>
+			</div>
+			<div class="w-100 container mt-3">
+				<div class="row row-cols-2">
+					<div class="col p-0" th:each="postData : ${postDatas}">
+						<div class=" my-2" th:classappend="${postDataStat.index % 2 == 0 ? 'me-2' : 'ms-2'}">
+							<ul class="list-group rounded-0">
+								<li class="list-group-item text-danger fw-bold" th:text="${postData.board.name}" style="cursor: pointer;" th:onclick="|location.href='@{/{boardId}(boardId=${postData.board.id})}'|"></li>
+								<li class="list-group-item d-flex justify-content-between align-items-center" style="cursor: pointer;" th:each="post : ${postData.posts}" th:onclick="|location.href='@{/{boardId}/v/{postId}(boardId=${postData.board.id},postId=${post.id})}'|"><span class="text-truncate" style="width:160px;" th:text="${post.title}"></span><span class="fs-7 text-secondary" th:text="${#temporals.format(post.writeAt, 'MM/dd HH:mm')}"></span></li>
+								<li class="list-group-item text-secondary" th:if="${postData.posts.size() < 4}">게시글이 더 존재하지 않습니다.</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div style="min-width: 320px; max-width: 320px; margin-left: 25px;">
+			<ul class="list-group rounded-0">
+				<li class="list-group-item text-primary fw-bold">최근 게시물</li>
+				<li class="list-group-item text-truncate d-flex justify-content-between align-items-center" style="cursor: pointer;" th:each="post : ${currentPosts}" th:onclick="|location.href='@{/{boardId}/v/{postId}(boardId=${post.board.id},postId=${post.id})}'|">
+					<span class="text-truncate" style="width: 220px;" th:text="${post.title}"></span>
+					<span class="fs-7 text-secondary" th:text="${#temporals.format(post.writeAt, 'MM/dd HH:mm')}"></span>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div th:replace="~{componant/nav :: toast}"></div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
+	<script>
+		const toastTrigger = document.getElementById('liveToastBtn')
+		const toastLiveExample = document.getElementById('liveToast')
+	
+		if (toastTrigger) {
+		  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+		  toastTrigger.addEventListener('click', () => {
+		    toastBootstrap.show()
+		  })
+		}
+	</script>
+	<script>
+		const id = document.querySelector(".navbar").dataset.accountId;
+		console.log(id);
+		const client = new StompJs.Client({
+			brokerURL : "ws://" + location.host + "/stomp/message",
+			onConnect : function() {
+				client.subscribe("/push/" + id, function(message) {
+					var obj = JSON.parse(message.body);
+					if (obj.type == "friendRequest") {
+						const $toast = document.querySelector("#liveToast");
+						
+						const $toastBody = $toast.querySelector(".toast-body");
+						$toastBody.innerHTML = obj.account.nickname + "님이 친구요청을 보냈습니다.";
+						
+						document.querySelector("#liveToastBtn").dispatchEvent(new MouseEvent("click"));
+					} else if (obj.type == "alreadyLogin") {
+						window.alert("다른 곳에서 중복 로그인 되어 로그아웃됩니다.");
+						location.href = "/account/duplicate";
+					}
+				});
+			}
+		});
+
+		client.activate();
+	</script>
+</body>
+</html>

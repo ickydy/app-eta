@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>애니타임</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/static/css/style.css}">
+<link rel="icon" th:href="@{/static/favicon.ico}">
+</head>
+<body>
+	<nav th:replace="~{componant/nav :: nav}"></nav>
+	<div class="d-flex gap-3 p-3" style="margin-top: 80px; background-color: #f8f8f8;">
+		<div style="max-width: 325px; min-width: 325px;">
+			<div class="p-4 border borderr-1" style="background-color: #fff;" th:data-timetable-id="${timetable.id}" id="timetable">
+				<h5 th:text="${timetable.account.nickname}"></h5>
+				<form th:action="@{/friend/delete}" method="post" class="d-flex align-items-center gap-2 mt-3">
+					<input type="hidden" name="friendId" th:value="${timetable.account.id}" />
+					<button type="submit" class="btn border border-1 rounded-0" id="deleteFriend">친구 삭제</button>
+				</form>
+			</div>
+		</div>
+		<div class="w-100" style="min-width: 1149px;">
+			<table class="table table-bordered">
+				<thead class="text-center table-light">
+					<tr style="height: 40px;">
+						<th style="width: 80px;"></th>
+						<td class="w-auto">월</td>
+						<td class="w-auto">화</td>
+						<td class="w-auto">수</td>
+						<td class="w-auto">목</td>
+						<td class="w-auto">금</td>
+					</tr>
+				</thead>
+				<tbody class="table-light">
+					<tr>
+						<th style="font-size: small; font-weight: normal; text-align: center; padding: 0;">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오전 9시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오전 10시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오전 11시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오전 12시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 1시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 2시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 3시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 4시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 5시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 6시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 7시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 8시</div>
+						</th>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day0">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day1">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day2">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day3">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day4">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div th:replace="~{componant/nav :: toast}"></div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
+	<script>
+		const toastTrigger = document.getElementById('liveToastBtn')
+		const toastLiveExample = document.getElementById('liveToast')
+	
+		if (toastTrigger) {
+		  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+		  toastTrigger.addEventListener('click', () => {
+		    toastBootstrap.show()
+		  })
+		}
+	</script>
+	<script>
+		const id = document.querySelector(".navbar").dataset.accountId;
+		console.log(id);
+		const client = new StompJs.Client({
+			brokerURL : "ws://" + location.host + "/stomp/message",
+			onConnect : function() {
+				client.subscribe("/push/" + id, function(message) {
+					var obj = JSON.parse(message.body);
+					if (obj.type == "friendRequest") {
+						const $toast = document.querySelector("#liveToast");
+						
+						const $toastBody = $toast.querySelector(".toast-body");
+						$toastBody.innerHTML = obj.account.nickname + "님이 친구요청을 보냈습니다.";
+						
+						document.querySelector("#liveToastBtn").dispatchEvent(new MouseEvent("click"));
+					} else if (obj.type == "alreadyLogin") {
+						window.alert("다른 곳에서 중복 로그인 되어 로그아웃됩니다.");
+						location.href = "/account/duplicate";
+					}
+				});
+			}
+		});
+
+		client.activate();
+	</script>
+	<script>
+		document.addEventListener("DOMContentLoaded", function(e) {
+			// 기존 시간표 데이터 불러오기
+			fetch("/api/timetable/subject/" + document.querySelector("#timetable").dataset.timetableId, {
+				
+			}).then(function(response){
+				return response.json();
+			}).then(function(obj){
+				obj.forEach(elm => {
+					const timeplaces = elm.timeplaceDatas;
+					[...timeplaces].forEach(t => {
+						const div = document.createElement("div");
+						div.style.position = "absolute";
+						div.style.top = (t.start / 12 - 9) * 60 + "px";
+						div.style.width = "100%";
+						div.style.height = (t.end - t.start) / 12 * 60 + "px";
+						div.style.backgroundColor = "#dcf2e9";
+						div.style.border = "1px solid #d6d6d6"
+						div.className = "text-start p-2 " + elm.id;
+						div.dataset.timetableSubjectId = elm.timetableSubjectId;
+						
+							const name = document.createElement("div");
+							name.className = "fw-bold";
+							name.innerHTML = elm.name;
+							const info = document.createElement("div");
+							info.innerHTML = elm.professor + "  " + elm.place;
+							info.className = "fs-7 text-secondary";
+						
+						div.append(name, info);
+						document.querySelector("#day" + t.day).appendChild(div);
+					});
+				});
+			});
+		});
+		
+		document.querySelector("#deleteFriend").addEventListener("click", function(e) {
+			if (!window.confirm("삭제하시겠습니까?")) {
+				e.preventDefault();
+			}
+		});
+	</script>
+</body>
+</html>

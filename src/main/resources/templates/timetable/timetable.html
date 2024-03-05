@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>애니타임</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/static/css/style.css}">
+<link rel="icon" th:href="@{/static/favicon.ico}">
+</head>
+<body>
+	<nav th:replace="~{componant/nav :: nav}"></nav>
+	<div class="d-flex gap-3 p-3" style="margin-top: 80px; background-color: #f8f8f8;">
+		<div style="max-width: 325px; min-width: 325px;">
+			<div th:text="|2024년 1학기|" class="border border-2 py-2 px-3"></div>
+			<div class="mt-1 p-4 border borderr-1" style="background-color: #fff;" th:object="${timetable}" th:data-timetable-id="*{id}" id="timetable">
+				<h5 th:text="*{name}"></h5>
+				<small class="text-secondary"><span th:text="*{totalCredit}" id="totalCredit"></span> 학점</small>
+				<div class="d-flex align-items-center gap-2 mt-2">
+					<button type="button" class="btn border border-1 rounded-0">
+						<i class="bi bi-download text-danger"></i> 이미지
+					</button>
+					<button type="button" class="btn border border-1 rounded-0 dropdown-toggle" data-bs-toggle="dropdown">
+						<i class="bi bi-gear text-danger"></i> 설정
+					</button>
+					<ul class="dropdown-menu">
+						<li><a class="dropdown-item" id="deleteBt">삭제</a></li>
+					</ul>
+				</div>
+				<form th:action="@{/timetable/delete}" method="post" id="deleteForm" class="d-none">
+					<input type="hidden" name="_method" value="delete" /> <input type="hidden" name="timetableId" th:value="${timetable.id}" />
+				</form>
+			</div>
+			<ol class="mt-1 border border-1 bg-white px-0" style="list-style-type: none;">
+				<li th:each="table : ${timetables}" class="p-3 d-flex justify-content-between align-items-center" th:onclick="|location.href='@{/timetable/{timetableId}(timetableId=${table.id})}'|" style="cursor: pointer;" th:styleappend="${table == timetable ? 'background-color : #f8f8f8;' : ''}"><span th:text="${table.name}"></span> <small th:if="${tableStat.first}" class="text-secondary">기본시간표</small></li>
+				<li class="p-3 text-danger" data-bs-toggle="modal" data-bs-target="#newTimetable" style="cursor: pointer;"><i class="bi bi-plus-lg"></i> <span>새 시간표 만들기</span></li>
+			</ol>
+		</div>
+		<div class="w-100" style="min-width: 1149px;">
+			<table class="table table-bordered">
+				<thead class="text-center table-light">
+					<tr style="height: 40px;">
+						<th style="width: 80px;"></th>
+						<td class="w-auto">월</td>
+						<td class="w-auto">화</td>
+						<td class="w-auto">수</td>
+						<td class="w-auto">목</td>
+						<td class="w-auto">금</td>
+					</tr>
+				</thead>
+				<tbody class="table-light">
+					<tr>
+						<th style="font-size: small; font-weight: normal; text-align: center; padding: 0;">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오전 9시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오전 10시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오전 11시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오전 12시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 1시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 2시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 3시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 4시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 5시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 6시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 7시</div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;">오후 8시</div>
+						</th>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day0">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day1">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day2">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day3">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+						<td style="font-size: small; font-weight: normal; text-align: center; padding: 0; position: relative;" id="day4">
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+							<div style="height: 60px; line-height: 60px; border-bottom: 1px solid #d6d6d6;"></div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div style="position: fixed; bottom: 20px; left: calc(50vw - 50px);">
+		<button class="btn btn-danger rounded-5" id="searchBt">
+			<i class="bi bi-search"></i> 수업 목록에서 검색
+		</button>
+	</div>
+	<div style="position: fixed; bottom: 0px; display: none; width: 100%; background-color: #f8f8f8;" id="subjects">
+		<div class="d-flex justify-content-between px-2" style="height: 40px; position: fixed; background-color: #fff; width: 100%;">
+			<!-- credit / type / grade / time / name -->
+			<div class="d-flex justify-content-start align-items-center gap-3">
+				<button type="button" class="btn btn-secondary btn-sm text-white my-auto rounded-5">검색어 입력</button>
+				<button type="button" class="btn btn-secondary btn-sm text-white my-auto rounded-5">학년:전체</button>
+				<button type="button" class="btn btn-secondary btn-sm text-white my-auto rounded-5">구분:전체</button>
+				<button type="button" class="btn btn-secondary btn-sm text-white my-auto rounded-5">학점:전체</button>
+			</div>
+			<button type="button" class="btn btn-danger btn-sm text-white my-auto rounded-3 me-3" id="closeBt">닫기</button>
+		</div>
+		<div style="height: 360px; font-size: small; overflow-y: scroll;" id="scrollDiv">
+			<table class="w-100" style="margin-top: 40px;">
+				<thead>
+					<tr style="background-color: #fff;">
+						<td class="p-2">교과목명</td>
+						<td class="p-2">교과목번호</td>
+						<td class="p-2">구분</td>
+						<td class="p-2">학년</td>
+						<td class="p-2">담당교수</td>
+						<td class="p-2">강의시간</td>
+						<td class="p-2">강의실</td>
+						<td class="p-2">학점</td>
+						<td class="p-2">이론</td>
+						<td class="p-2">실습</td>
+						<td class="p-2">강의평</td>
+						<td class="p-2">담은 인원</td>
+						<td class="p-2">비고</td>
+					</tr>
+				</thead>
+				<tbody id="tbody">
+					<tr th:each="subject : ${subjects}" class="border border-bottom border-1 subject" style="cursor: pointer;" th:data-subject-id="${subject.id}">
+						<td class="p-2" style="font-weight: bold;" th:text="${subject.name}">교과목명</td>
+						<td class="p-2" style="width: 106px;" th:text="${subject.code}">교과목번호</td>
+						<td class="p-2" style="width: 54px;" th:text="${subject.type.name}">구분</td>
+						<td class="p-2" style="width: 54px;" th:text="${subject.grade}">학년</td>
+						<td class="p-2" style="width: 86px;" th:text="${subject.professor}">담당교수</td>
+						<td class="p-2" style="width: 138px;" th:text="${subject.time}">강의시간</td>
+						<td class="p-2" style="width: 96px;" th:text="${subject.place}">강의실</td>
+						<td class="p-2" style="width: 54px;" th:text="${subject.credit}">학점</td>
+						<td class="p-2" style="width: 54px;" th:text="${subject.theory}">이론</td>
+						<td class="p-2" style="width: 54px;" th:text="${subject.practice}">실습</td>
+						<td class="p-2" style="width: 86px;" th:text="${subject.lectureRate}">강의평</td>
+						<td class="p-2" style="width: 90px;" th:text="${subject.popular}">담은 인원</td>
+						<td class="p-2" th:text="${subject.notice}">비고</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="newTimetable" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<form th:action="@{/timetable/newTimetable}" method="post">
+					<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">시간표 생성하기</h1>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<div class="modal-body">
+						<input type="text" placeholder="이름을 설정해주세요" name="name" class="form-control" />
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-danger form-control">생성</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div th:replace="~{componant/nav :: toast}"></div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
+	<script>
+		const toastTrigger = document.getElementById('liveToastBtn')
+		const toastLiveExample = document.getElementById('liveToast')
+	
+		if (toastTrigger) {
+		  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+		  toastTrigger.addEventListener('click', () => {
+		    toastBootstrap.show()
+		  })
+		}
+	</script>
+	<script>
+		const id = document.querySelector(".navbar").dataset.accountId;
+		console.log(id);
+		const client = new StompJs.Client({
+			brokerURL : "ws://" + location.host + "/stomp/message",
+			onConnect : function() {
+				client.subscribe("/push/" + id, function(message) {
+					var obj = JSON.parse(message.body);
+					if (obj.type == "friendRequest") {
+						const $toast = document.querySelector("#liveToast");
+						
+						const $toastBody = $toast.querySelector(".toast-body");
+						$toastBody.innerHTML = obj.account.nickname + "님이 친구요청을 보냈습니다.";
+						
+						document.querySelector("#liveToastBtn").dispatchEvent(new MouseEvent("click"));
+					} else if (obj.type == "alreadyLogin") {
+						window.alert("다른 곳에서 중복 로그인 되어 로그아웃됩니다.");
+						location.href = "/account/duplicate";
+					}
+				});
+			}
+		});
+
+		client.activate();
+	</script>
+	<script>
+		
+		document.querySelector("#deleteBt").addEventListener("click", function(e) {
+			if (window.confirm("삭제하시겠습니까?")) {
+				document.querySelector("#deleteForm").submit();
+			}
+		});
+	
+		let datas = [];
+		let currentPage = 1;
+	
+		document.addEventListener("DOMContentLoaded", function(e) {
+			
+			// 데이터 30개 불러오기
+			fetch("/api/timetable/subject?page=" + currentPage, {
+	
+			}).then(function(response) {
+				return response.json();
+			}).then(function(obj) {
+				datas = [...datas, ...obj];
+				currentPage++;
+				
+				[...obj].forEach(handleSubject);
+			});
+			
+			// 기존 시간표 데이터 불러오기
+			fetch("/api/timetable/subject/" + document.querySelector("#timetable").dataset.timetableId, {
+				
+			}).then(function(response){
+				return response.json();
+			}).then(function(obj){
+				obj.forEach(elm => {
+					const timeplaces = elm.timeplaceDatas;
+					[...timeplaces].forEach(t => {
+						const div = document.createElement("div");
+						div.style.position = "absolute";
+						div.style.top = (t.start / 12 - 9) * 60 + "px";
+						div.style.width = "100%";
+						div.style.height = (t.end - t.start) / 12 * 60 + "px";
+						div.style.backgroundColor = "#dcf2e9";
+						div.style.border = "1px solid #d6d6d6"
+						div.className = "text-start p-2 " + elm.id;
+						div.dataset.timetableSubjectId = elm.timetableSubjectId;
+						
+							const name = document.createElement("div");
+							name.className = "fw-bold";
+							name.innerHTML = elm.name;
+							const info = document.createElement("div");
+							info.innerHTML = elm.professor + "  " + elm.place;
+							info.className = "fs-7 text-secondary";
+							
+						div.addEventListener("dblclick", function(e) {
+							
+							const agree = window.confirm("삭제하시겠습니까?");
+							
+							if (agree) {
+								const timetableId = document.querySelector("#timetable").dataset.timetableId;
+								const timetableSubjectId = e.target.dataset.timetableSubjectId;
+								
+								fetch("/api/timetable/deleteSchedule/" + timetableId, {
+									method : "POST",
+									headers : {
+										"Content-type" : "application/x-www-form-urlencoded"
+									},
+									body : "timetableSubjectId=" + timetableSubjectId
+								}).then(function(response){
+									return response.json();
+								}).then(function(obj){
+									if (obj.result) {
+										[...document.getElementsByClassName(obj.originSubject.id)].forEach(elm => {
+											console.log(elm);
+											console.log(elm.parentElement);
+											elm.parentElement.removeChild(elm);
+										});
+										
+										const currentCredit = document.querySelector("#totalCredit").textContent;
+										document.querySelector("#totalCredit").innerHTML = currentCredit * 1 - obj.originSubject.credit * 1;
+									}
+								});
+							}
+						});
+						
+						div.append(name, info);
+						document.querySelector("#day" + t.day).appendChild(div);
+					});
+				});
+			});
+			
+			// 수업 목록 올리기
+			document.querySelector("#searchBt").addEventListener("click", function(e) {
+				document.querySelector("#subjects").style.display = "block";
+			});
+			
+			// 수업 목록 내리기
+			document.querySelector("#closeBt").addEventListener("click", function(e) {
+				document.querySelector("#subjects").style.display = "none";
+			});
+			
+			// 스크롤 맨 아래로 내려갔을 때 데이터 30개씩 불러오기
+			document.querySelector("#scrollDiv").addEventListener("scroll", function(e) {
+				if (e.target.clientHeight + e.target.scrollTop >= e.target.scrollHeight) {
+					fetch("/api/timetable/subject?page=" + currentPage, {
+	
+					}).then(function(response) {
+						return response.json();
+					}).then(function(obj) {
+						datas= [...datas, ...obj];
+						currentPage++;
+						
+						[...obj].forEach(handleSubject);
+					});
+				}
+			});
+			
+		});
+			
+			
+		function handleSubject(elm) {
+			// rendering
+			const tr = document.createElement("tr");
+			tr.className = "border border-bottom border-1 subject";
+			tr.style.cursor = "pointer";
+			tr.dataset.subjectId = elm.id;
+			
+			const name = document.createElement("td");
+			name.className = "p-2";
+			name.style.fontWeight = "bold";
+			name.innerHTML = elm.name;
+			
+			const code = document.createElement("td");
+			code.className = "p-2";
+			code.style.width = "106px";
+			code.innerHTML = elm.code;
+	
+			const type = document.createElement("td");
+			type.className = "p-2";
+			type.style.width = "54px";
+			type.innerHTML = elm.type.name;
+			
+			const grade = document.createElement("td");
+			grade.className = "p-2";
+			grade.style.width = "54px";
+			grade.innerHTML = elm.grade;
+			
+			const professor = document.createElement("td");
+			professor.className = "p-2";
+			professor.style.width = "86px";
+			professor.innerHTML = elm.professor;
+			
+			const time = document.createElement("td");
+			time.className = "p-2";
+			time.style.width = "138px";
+			time.innerHTML = elm.time;
+			
+			const place = document.createElement("td");
+			place.className = "p-2";
+			place.style.width = "96px";
+			place.innerHTML = elm.place;
+			
+			const credit = document.createElement("td");
+			credit.className = "p-2";
+			credit.style.width = "54px";
+			credit.innerHTML = elm.credit;
+			
+			const theory = document.createElement("td");
+			theory.className = "p-2";
+			theory.style.width = "54px";
+			theory.innerHTML = elm.theory;
+			
+			const practice = document.createElement("td");
+			practice.className = "p-2";
+			practice.style.width = "54px";
+			practice.innerHTML = elm.practice;
+			
+			const lectureRate = document.createElement("td");
+			lectureRate.className = "p-2";
+			lectureRate.style.width = "86px";
+			lectureRate.innerHTML = elm.lectureRate;
+			
+			const popular = document.createElement("td");
+			popular.className = "p-2";
+			popular.style.width = "90px";
+			popular.innerHTML = elm.popular;
+			
+			const notice = document.createElement("td");
+			notice.className = "p-2";
+			notice.innerHTML = elm.notice;
+			
+			tr.append(name, code, type, grade, professor, time, place, credit, theory, practice, lectureRate, popular, notice);
+			document.querySelector("#tbody").appendChild(tr);
+			
+			// event handling
+			let currentSubject =[];
+			// event handle : mouseenter 예상 위치 띄우기
+			tr.addEventListener("mouseenter", function(e) {
+				const subjectId = e.target.dataset.subjectId;
+				const subject = datas.find(data => data.id == subjectId);
+				const timeplaces = subject.timeplaceDatas;
+				[...timeplaces].forEach(t => {
+					const div = document.createElement("div");
+					div.style.position = "absolute";
+					div.style.top = (t.start / 12 - 9) * 60 + "px";
+					div.style.width = "100%";
+					div.style.height = (t.end - t.start) / 12 * 60 + "px";
+					div.style.backgroundColor = "#dcf2e9";
+					div.className = "text-start p-2";
+					
+						const name = document.createElement("div");
+						name.className = "fw-bold";
+						name.innerHTML = subject.name;
+						const info = document.createElement("div");
+						info.innerHTML = subject.professor + "  " + subject.place;
+						info.className = "fs-7 text-secondary";
+					
+					div.append(name, info);
+					
+					document.querySelector("#day" + t.day).appendChild(div);
+					currentSubject.push(div);
+				});
+			});
+			// event handle : mouseleave 띄워둔 예상 위치 지우기
+			tr.addEventListener("mouseleave", function(e) {
+				currentSubject.forEach(div => {
+					div.parentElement.removeChild(div);
+				});
+				currentSubject = [];
+			});
+			// event handle : click 시간표에 과목 추가
+			tr.addEventListener("click", function(e) {
+				
+				const subjectId = e.currentTarget.dataset.subjectId;
+				
+				fetch("/api/timetable/addSchedule/" + document.querySelector("#timetable").dataset.timetableId, {
+					method : "POST",
+					headers : {
+						"Content-type" : "application/x-www-form-urlencoded"
+					},
+					body : "subjectId=" + e.currentTarget.dataset.subjectId
+				}).then(function(response){
+					return response.json();
+				}).then(function(obj){
+					if (obj.result) {
+						const subject = datas.find(data => data.id == subjectId);
+						const timeplaces = subject.timeplaceDatas;
+						[...timeplaces].forEach(t => {
+							const div = document.createElement("div");
+							div.style.position = "absolute";
+							div.style.top = (t.start / 12 - 9) * 60 + "px";
+							div.style.width = "100%";
+							div.style.height = (t.end - t.start) / 12 * 60 + "px";
+							div.style.backgroundColor = "#dcf2e9";
+							div.style.border = "1px solid #d6d6d6"
+							div.className = "text-start p-2 " + subject.id;
+							div.dataset.timetableSubjectId = obj.timetableSubjectId;
+							
+								const name = document.createElement("div");
+								name.className = "fw-bold";
+								name.innerHTML = subject.name;
+								const info = document.createElement("div");
+								info.innerHTML = subject.professor + "  " + subject.place;
+								info.className = "fs-7 text-secondary";
+							
+							div.append(name, info);
+							
+							div.addEventListener("dblclick", function(e) {
+								
+								const agree = window.confirm("삭제하시겠습니까?");
+								
+								if (agree) {
+									const timetableId = document.querySelector("#timetable").dataset.timetableId;
+									const timetableSubjectId = e.target.dataset.timetableSubjectId;
+									
+									fetch("/api/timetable/deleteSchedule/" + timetableId, {
+										method : "POST",
+										headers : {
+											"Content-type" : "application/x-www-form-urlencoded"
+										},
+										body : "timetableSubjectId=" + timetableSubjectId
+									}).then(function(response){
+										return response.json();
+									}).then(function(obj){
+										if (obj.result) {
+											[...document.getElementsByClassName(obj.originSubject.id)].forEach(elm => {
+												console.log(elm);
+												console.log(elm.parentElement);
+												elm.parentElement.removeChild(elm);
+											});
+											
+											const currentCredit = document.querySelector("#totalCredit").textContent;
+											document.querySelector("#totalCredit").innerHTML = currentCredit * 1 - obj.originSubject.credit * 1;
+										}
+									});
+								}
+							});
+							
+							document.querySelector("#day" + t.day).appendChild(div);
+						});
+						
+						const currentCredit = document.querySelector("#totalCredit").textContent;
+						document.querySelector("#totalCredit").innerHTML = currentCredit * 1 + subject.credit * 1;
+					} else {
+						window.alert("시간표에 추가하는것에 실패했습니다.");
+					}
+				});
+			}); //
+		};	
+	</script>
+</body>
+</html>

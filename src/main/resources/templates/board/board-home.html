@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>애니타임</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/static/css/style.css}">
+<link rel="icon" th:href="@{/static/favicon.ico}">
+</head>
+<body>
+	<nav th:replace="~{componant/nav :: nav}"></nav>
+	<div style="margin-top: 80px; border-bottom: 1px solid #d6d6d6; background-color: #f2f2f2;">
+		<div class="p-3">
+			<div class="d-flex justify-content-center align-items-start">
+				<ul th:each="boardData : ${boardDatas}" class="mx-3 my-0 px-3" th:classappend="${boardDataStat.first ? '' : 'border-start border-1'}" style="list-style: none;">
+					<li th:each="board : ${boardData.boards}"><a class="link-dark link-underline-opacity-0 link-underline-opacity-100-hover" th:text="${board.name}" th:href="@{/{boardId}(boardId=${board.id})}"></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="main d-flex gap-5 mt-4">
+		<div>
+			<div class="border border-1 p-3" style="width: 780px; cursor: pointer;" th:onclick="|location.href='@{/{boardId}(boardId=${board.id})}'|">
+				<h4 th:text="${board.name}" class="m-0"></h4>
+				<p th:text="${board.description}" th:if="${board.description}" class="mt-1 mb-0 text-secondary fs-7"></p>
+			</div>
+			<div class="mt-2 text-secondary border border-2 px-3 py-2" id="newPost">
+				<div style="cursor: text;">
+					<span>새 글을 작성해주세요!</span><i class="bi bi-pencil-fill float-end" id="pencil"></i>
+				</div>
+			</div>
+			<div style="display: none;" id="textarea">
+				<form th:action="@{/post}" method="post" class="mt-2 border border-2" enctype="multipart/form-data">
+					<input type="hidden" name="boardId" th:value="${board.id}" /> <input type="text" name="title" placeholder="글 제목" class="text-secondary px-3 py-2 w-100" style="border: none; border-bottom: 1px solid #dee2e6;" />
+					<p class="m-0 p-2 pb-1">
+						<textarea name="content" class="border border-0 w-100 m-0 p-3 fs-7" style="height: 350px; resize: none; white-space: pre-line;"
+							placeholder="애니타임은 누구나 기분 좋게 참여할 수 있는 커뮤니티를 만들기 위해 커뮤니티 이용규칙을 제정하여 운영하고 있습니다. 위반 시 게시물이 삭제되고 서비스 이용이 일정 기간 제한될 수 있습니다. 
+							
+							아래는 이 게시판에 해당하는 핵심 내용에 대한 요약 사항이며, 게시물 작성 전 커뮤니티 이용규칙 전문을 반드시 확인하시기 바랍니다. 
+							
+							※ 정치·사회 관련 행위 금지 
+							- 국가기관, 정치 관련 단체, 언론, 시민단체에 대한 언급 혹은 이와 관련한 행위 
+							- 정책·외교 또는 정치·정파에 대한 의견, 주장 및 이념, 가치관을 드러내는 행위 
+							- 성별, 종교, 인종, 출신, 지역, 직업, 이념 등 사회적 이슈에 대한 언급 혹은 이와 관련한 행위 
+							- 위와 같은 내용으로 유추될 수 있는 비유, 은어 사용 행위 
+							* 해당 게시물은 시사·이슈 게시판에만 작성 가능합니다. 
+							
+							※ 홍보 및 판매 관련 행위 금지 
+							- 영리 여부와 관계 없이 사업체·기관·단체·개인에게 직간접적으로 영향을 줄 수 있는 게시물 작성 행위 
+							- 위와 관련된 것으로 의심되거나 예상될 수 있는 바이럴 홍보 및 명칭·단어 언급 행위 
+							* 해당 게시물은 홍보게시판에만 작성 가능합니다. 
+							
+							※ 불법촬영물 유통 금지
+							불법촬영물등을 게재할 경우 전기통신사업법에 따라 삭제 조치 및 서비스 이용이 영구적으로 제한될 수 있으며 관련 법률에 따라 처벌받을 수 있습니다. 
+							
+							※ 그 밖의 규칙 위반 
+							- 타인의 권리를 침해하거나 불쾌감을 주는 행위 
+							- 범죄, 불법 행위 등 법령을 위반하는 행위 
+							- 욕설, 비하, 차별, 혐오, 자살, 폭력 관련 내용을 포함한 게시물 작성 행위 
+							- 음란물, 성적 수치심을 유발하는 행위 
+							- 스포일러, 공포, 속임, 놀라게 하는 행위"></textarea>
+					</p>
+					<div class="border-top border-1 p-3 d-flex flex-wrap justify-content-start align-items-center" id="imgView">
+						<div class="border border-1 d-flex justify-content-center align-items-center" style="width: 80px; height: 80px; cursor: pointer;" onclick="document.querySelector('#images').click();">
+							<i class="bi bi-plus-lg text-secondary fs-3"></i>
+						</div>
+					</div>
+					<p class="border-top border-1 m-0 px-3 py-2 d-flex justify-content-between align-items-center">
+						<button type="button" class="border border-0 bg-light p-0" onclick="document.querySelector('#images').click();">
+							<img th:src="@{/static/image/clip.png}" width="24" />
+						</button>
+						<input type="file" id="images" name="images" accept="image/*" multiple style="display: none;" />
+						<button type="submit" class="btn btn-sm btn-danger">
+							<i class="bi bi-pencil-fill"></i>
+						</button>
+					</p>
+				</form>
+			</div>
+			<div class="mt-2">
+				<div class="border border-1 p-3" style="cursor: pointer;" th:each="post : ${board.posts}" th:onclick="|location.href='@{/{boardId}/v/{postId}(boardId=${board.id},postId=${post.id})}'|">
+					<p class="mb-1 fw-bold" th:text="${post.title}"></p>
+					<p class="mb-1 text-truncate" th:text="${post.content}" style="width: 746px; max-height: 48px; white-space: pre;"></p>
+					<div class="d-flex justify-content-start align-items-center text-secondary fs-7">
+						<p style="color: #05BCBC;" th:if="${post.comments.size() != 0}" class="border-end border-1 m-0">
+							<i class="bi bi-chat"></i> <span th:text="${post.comments.size()}"></span>
+						</p>
+						<p th:text="${#temporals.format(post.writeAt, 'MM/dd HH:mm')}" class="m-0 border-end border-1 pe-2" th:classappend="${post.comments.size() != 0 ? 'ps-2' : ''}"></p>
+						<p th:text="${board.anonymous ? '익명' : post.account.nickname}" class="m-0 px-2"></p>
+					</div>
+				</div>
+			</div>
+			<div class="d-flex justify-content-between align-items-center mt-2" th:classappend="${page == 1 ? 'justify-content-end' : 'justify-content-between'}">
+				<button class="text-danger px-2 py-1" style="border: 1px solid #dc3545; border-radius: 4px; background-color: white;" th:if="${page != 1}">&lt; 이전</button>
+				<button class="text-danger px-2 py-1" style="border: 1px solid #dc3545; border-radius: 4px; background-color: white;">다음 &gt;</button>
+			</div>
+		</div>
+		<div style="min-width: 320px;">
+			<ul class="list-group rounded-0">
+				<li class="list-group-item text-primary fw-bold">최근 게시물</li>
+				<li class="list-group-item text-truncate d-flex justify-content-between align-items-center" style="cursor: pointer;" th:each="post : ${currentPosts}" th:onclick="|location.href='@{/{boardId}/v/{postId}(boardId=${post.board.id},postId=${post.id})}'|">
+					<span class="text-truncate" style="width: 220px;" th:text="${post.title}"></span>
+					<span class="fs-7 text-secondary" th:text="${#temporals.format(post.writeAt, 'MM/dd HH:mm')}"></span>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div th:replace="~{componant/nav :: toast}"></div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
+	<script>
+		const toastTrigger = document.getElementById('liveToastBtn')
+		const toastLiveExample = document.getElementById('liveToast')
+	
+		if (toastTrigger) {
+		  const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+		  toastTrigger.addEventListener('click', () => {
+		    toastBootstrap.show()
+		  })
+		}
+	</script>
+	<script>
+		const id = document.querySelector(".navbar").dataset.accountId;
+		console.log(id);
+		const client = new StompJs.Client({
+			brokerURL : "ws://" + location.host + "/stomp/message",
+			onConnect : function() {
+				client.subscribe("/push/" + id, function(message) {
+					var obj = JSON.parse(message.body);
+					if (obj.type == "friendRequest") {
+						const $toast = document.querySelector("#liveToast");
+						
+						const $toastBody = $toast.querySelector(".toast-body");
+						$toastBody.innerHTML = obj.account.nickname + "님이 친구요청을 보냈습니다.";
+						
+						document.querySelector("#liveToastBtn").dispatchEvent(new MouseEvent("click"));
+					} else if (obj.type == "alreadyLogin") {
+						window.alert("다른 곳에서 중복 로그인 되어 로그아웃됩니다.");
+						location.href = "/account/duplicate";
+					}
+				});
+			}
+		});
+
+		client.activate();
+	</script>
+	<script>
+		let selectedFiles = [];
+		let key = 0;
+		document.querySelector("#images").addEventListener("change",
+				function(e) {
+					let files = e.target.files;
+					if (files.length > 0) {
+					
+						[...files].forEach(function(file) {
+							const obj = {
+								key : key++,
+								file : file
+							};
+							selectedFiles.push(obj);
+							const fileReader = new FileReader();
+							
+							fileReader.readAsDataURL(file);
+							fileReader.onload = function(evt) {
+								const div = document.createElement("div");
+								div.style.width = "80px";
+								div.style.height = "80px";
+								div.style.overflow = "hidden";
+								div.className = "ms-2"
+								div.dataset.key = obj.key;
+									
+									const img = document.createElement("img");
+									img.src = evt.target.result;
+									img.style.width = "80px";
+									img.className = "object-fit-cover";
+									div.appendChild(img);
+									
+								document.querySelector("#imgView").appendChild(div);
+								
+								div.addEventListener("dblclick", function(event) {
+									const key = event.currentTarget.dataset.key;
+									console.log(key);
+									selectedFiles = selectedFiles.filter(elm => elm.key != key);
+									
+									const transfer = new DataTransfer();
+									selectedFiles.forEach(elm=>transfer.items.add(elm.file));
+									e.target.files = transfer.files;
+									
+									div.parentElement.removeChild(div);
+								});
+							}
+						});
+						const transfer = new DataTransfer();
+						selectedFiles.forEach(elm=>transfer.items.add(elm.file));
+						e.target.files = transfer.files;
+					}
+				});
+		
+		document
+				.querySelector("#newPost")
+				.addEventListener(
+						"click",
+						function(e) {
+							e.currentTarget.style.display = "none";
+							document.querySelector("#textarea").style.display = "block";
+						});
+	</script>
+</body>
+</html>
